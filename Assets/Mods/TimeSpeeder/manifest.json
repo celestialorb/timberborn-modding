@@ -1,0 +1,13 @@
+{
+  "Name": "TimeSpeeder",
+  "Version": "0.0.0",
+  "Id": "Daxisaurus.TimeSpeeder",
+  "MinimumGameVersion": "1.0.7.0",
+  "Description": "TODO",
+  "RequiredMods": [
+    {
+      "Id": "eMka.ModSettings",
+      "MinimumVersion": "1.0.1.0"
+    }
+  ]
+}

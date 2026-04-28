@@ -1,0 +1,10 @@
+{
+    "name": "Timberborn.Mods.Daxisaurus.TimeSpeeder",
+    "references": [
+        "UnityEngine",
+        "UnityEngine.UIElements",
+        "Timberborn.Modding",
+        "Bindito.Core",
+        "ModSettings.Core"
+    ]
+}

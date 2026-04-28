@@ -7,6 +7,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.emka.modsettings": {
+      "version": "https://github.com/eMkaQQ/timberborn-modding.git?path=/Assets/Mods/ModSettings/Scripts",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "9b9918b886b05f34c1de2483ee8f5b000e9c9873"
+    },
     "com.unity.bindings.openimageio": {
       "version": "1.0.2",
       "depth": 1,

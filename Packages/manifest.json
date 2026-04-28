@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.emka.modsettings": "https://github.com/eMkaQQ/timberborn-modding.git?path=/Assets/Mods/ModSettings/Scripts",
     "com.unity.formats.fbx": "5.1.5",
     "com.unity.ide.rider": "3.0.38",
     "com.unity.ide.visualstudio": "2.0.26",
