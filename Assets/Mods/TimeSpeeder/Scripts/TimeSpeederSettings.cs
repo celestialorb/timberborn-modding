@@ -16,17 +16,17 @@ internal class TimeSpeederSettings : ModSettingsOwner {
     public ModSetting<int> NormalSpeed { get; } =
         new(1,
             ModSettingDescriptor.Create("Speed Factor 1 [>]")
-            .SetTooltip("The speed factor for the first speed button.")
+            .SetTooltip("The speed factor for the first speed button, the default value for this is 1.")
         );
     public ModSetting<int> DoubleSpeed { get; } =
         new(3,
             ModSettingDescriptor.Create("Speed Factor 2 [>>]")
-            .SetTooltip("The speed factor for the second speed button.")
+            .SetTooltip("The speed factor for the second speed button, the default value for this is 3.")
         );
     public ModSetting<int> TripleSpeed { get; } =
         new(7,
             ModSettingDescriptor.Create("Speed Factor 3 [>>>]")
-            .SetTooltip("The speed factor for the third speed button.")
+            .SetTooltip("The speed factor for the third speed button, the default value for this is 7.")
         );
 
     public override ModSettingsContext ChangeableOn => ModSettingsContext.All;
