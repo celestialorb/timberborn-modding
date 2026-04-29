@@ -1,4 +1,5 @@
 using Timberborn.BaseComponentSystem;
+using Timberborn.AssetSystem;
 using Timberborn.Buildings;
 using Timberborn.ConstructionSites;
 using Timberborn.CoreUI;
@@ -8,6 +9,7 @@ using Timberborn.Localization;
 using Timberborn.ScienceSystem;
 using Timberborn.TemplateSystem;
 
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
@@ -18,11 +20,16 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
     /// </summary>
     sealed class GhostPlannerConstructionUnlockFragment : IEntityPanelFragment {
 
+        /// <summary>Path passed to <see cref="IAssetLoader"/> for USS under AssetBundles/Resources (matches HelloWorld style).</summary>
+        const string UnlockStylesheetAssetPath = "UI/Styles/GhostPlannerEntityPanel";
+
         static readonly string SubPanelClass = "entity-sub-panel";
         static readonly string SubBoxClass = "bg-sub-box";
 
         readonly BuildingUnlockingService _buildingUnlockingService;
         readonly DialogBoxShower _dialogBoxShower;
+        readonly IAssetLoader _assetLoader;
+        readonly VisualElementLoader _visualElementLoader;
         readonly ILoc _loc;
 
         VisualElement _root;
@@ -36,9 +43,13 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
         internal GhostPlannerConstructionUnlockFragment(
             BuildingUnlockingService buildingUnlockingService,
             DialogBoxShower dialogBoxShower,
+            IAssetLoader assetLoader,
+            VisualElementLoader visualElementLoader,
             ILoc loc) {
             _buildingUnlockingService = buildingUnlockingService;
             _dialogBoxShower = dialogBoxShower;
+            _assetLoader = assetLoader;
+            _visualElementLoader = visualElementLoader;
             _loc = loc;
         }
 
@@ -46,17 +57,33 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             _root = new NineSliceVisualElement();
             _root.AddToClassList(SubPanelClass);
             _root.AddToClassList(SubBoxClass);
+            _root.AddToClassList("ghost-planner-unlock");
+            AttachGhostPlannerStylesheet();
             _root.style.flexDirection = FlexDirection.Column;
             _root.style.alignItems = Align.Stretch;
             _root.ToggleDisplayStyle(false);
 
             _hintLabel = new Label();
             _hintLabel.AddToClassList("entity-fragment__label");
+            _hintLabel.AddToClassList("ghost-planner-unlock__hint");
             _hintLabel.style.whiteSpace = WhiteSpace.Normal;
             _root.Add(_hintLabel);
 
-            _unlockButton = new Button();
-            _unlockButton.AddToClassList("entity-fragment__button");
+            // NineSliceButton ctor is not callable from mod assemblies; load via UXML (CoreUI instantiates).
+            // CloneTree root may be a wrapper (not Button); resolve the named control before reparenting.
+            var unlockTreeRoot = _visualElementLoader.LoadVisualElement("GhostPlannerUnlockButton");
+            _unlockButton = ResolveUnlockButton(unlockTreeRoot);
+            if (_unlockButton == null) {
+                Debug.LogError(
+                    "[GhostPlanner] GhostPlannerUnlockButton UXML must expose a Unity UI Toolkit Button named \"GhostPlannerUnlockButton\".");
+                _unlockButton = new Button();
+                _unlockButton.AddToClassList("entity-fragment__button");
+                _unlockButton.AddToClassList("ghost-planner-unlock__button");
+            }
+            else {
+                _unlockButton.RemoveFromHierarchy();
+            }
+
             _unlockButton.RegisterCallback<ClickEvent>(_ => OnUnlockClicked());
             _root.Add(_unlockButton);
 
@@ -164,6 +191,41 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
 
             var templateSpec = _buildingSpec.GetSpec<TemplateSpec>();
             return templateSpec?.TemplateName ?? string.Empty;
+        }
+
+        void AttachGhostPlannerStylesheet() {
+            var sheet = _assetLoader.LoadSafe<StyleSheet>(UnlockStylesheetAssetPath);
+            if (sheet != null) {
+                _root.styleSheets.Add(sheet);
+            }
+        }
+
+        static Button ResolveUnlockButton(VisualElement unlockTreeRoot) {
+            var named = unlockTreeRoot.Q<Button>("GhostPlannerUnlockButton");
+            if (named != null) {
+                return named;
+            }
+
+            if (unlockTreeRoot is Button rootButton) {
+                return rootButton;
+            }
+
+            return FindFirstButtonInSubtree(unlockTreeRoot);
+        }
+
+        static Button FindFirstButtonInSubtree(VisualElement element) {
+            if (element is Button button) {
+                return button;
+            }
+
+            foreach (var child in element.Children()) {
+                var found = FindFirstButtonInSubtree(child);
+                if (found != null) {
+                    return found;
+                }
+            }
+
+            return null;
         }
 
     }

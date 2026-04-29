@@ -1,0 +1,22 @@
+/* GhostPlanner — entity panel unlock segment (loaded via Resources). */
+
+.ghost-planner-unlock {
+    background-color: rgb(104, 61, 44);
+    padding-top: 6px;
+    padding-bottom: 4px;
+}
+
+.ghost-planner-unlock__hint {
+    margin-bottom: 6px;
+    font-style: italic;
+    -unity-font-style: italic;
+    opacity: 0.95;
+}
+
+.ghost-planner-unlock__button {
+    margin-top: 2px;
+}
+
+.ghost-planner-unlock__button:disabled {
+    opacity: 0.55;
+}

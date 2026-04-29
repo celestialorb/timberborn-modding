@@ -13,6 +13,7 @@
         "Timberborn.ScienceSystem",
         "Timberborn.Localization",
         "Timberborn.TemplateSystem",
-        "Timberborn.EntitySystem"
+        "Timberborn.EntitySystem",
+        "Timberborn.AssetSystem"
     ]
 }
