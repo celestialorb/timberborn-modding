@@ -2,6 +2,7 @@ using Timberborn.BaseComponentSystem;
 using Timberborn.Buildings;
 using Timberborn.ConstructionSites;
 using Timberborn.CoreUI;
+using Timberborn.EntitySystem;
 using Timberborn.EntityPanelSystem;
 using Timberborn.Localization;
 using Timberborn.ScienceSystem;
@@ -120,7 +121,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 return;
             }
 
-            var displayName = GetBuildingTemplateLabel(_buildingSpec);
+            var displayName = GetBuildingDisplayName();
 
             if (!_buildingUnlockingService.Unlockable(_buildingSpec)) {
                 _dialogBoxShower.Create()
@@ -151,9 +152,18 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             }
         }
 
-        static string GetBuildingTemplateLabel(BuildingSpec buildingSpec) {
-            var templateSpec = buildingSpec.GetSpec<TemplateSpec>();
-            return templateSpec != null ? templateSpec.TemplateName : string.Empty;
+        string GetBuildingDisplayName() {
+            if (_buildingSpec == null) {
+                return string.Empty;
+            }
+
+            var labeled = _buildingSpec.GetSpec<LabeledEntitySpec>();
+            if (labeled != null && !string.IsNullOrEmpty(labeled.DisplayNameLocKey)) {
+                return _loc.T(labeled.DisplayNameLocKey);
+            }
+
+            var templateSpec = _buildingSpec.GetSpec<TemplateSpec>();
+            return templateSpec?.TemplateName ?? string.Empty;
         }
 
     }
