@@ -1,5 +1,5 @@
 {
-    "name": "Timberborn.Mods.Daxisaurus.ConfigurableGameSpeed",
+    "name": "Timberborn.Mods.Daxisaurus.ConfigurableGameSpeeds",
     "references": [
         "UnityEngine",
         "UnityEngine.UIElements",

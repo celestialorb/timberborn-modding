@@ -3,15 +3,15 @@ using ModSettings.Core;
 using Timberborn.Modding;
 using Timberborn.SettingsSystem;
 
-namespace Timberborn.Mods.Daxisaurus.ConfigurableGameSpeed {
-    public static class ConfigurableGameSpeedConfig {
+namespace Timberborn.Mods.Daxisaurus.ConfigurableGameSpeeds {
+    public static class ConfigurableGameSpeedsConfig {
         public static int NormalSpeed = 1;
         public static int DoubleSpeed = 3;
         public static int TripleSpeed = 7;
     }
 
-    internal class ConfigurableGameSpeedSettings : ModSettingsOwner {
-        internal static ConfigurableGameSpeedSettings Instance { get; private set; }
+    internal class ConfigurableGameSpeedsSettings : ModSettingsOwner {
+        internal static ConfigurableGameSpeedsSettings Instance { get; private set; }
 
         public ModSetting<int> NormalSpeed { get; } =
             new(1,
@@ -31,7 +31,7 @@ namespace Timberborn.Mods.Daxisaurus.ConfigurableGameSpeed {
 
         public override ModSettingsContext ChangeableOn => ModSettingsContext.All;
 
-        public ConfigurableGameSpeedSettings(
+        public ConfigurableGameSpeedsSettings(
             ISettings settings,
             ModSettingsOwnerRegistry registry,
             ModRepository modRepository
@@ -43,18 +43,18 @@ namespace Timberborn.Mods.Daxisaurus.ConfigurableGameSpeed {
             TripleSpeed.ValueChanged += (_, _) => UpdateRuntimeValues();
         }
 
-        protected override string ModId => "Daxisaurus.Timberborn.ConfigurableGameSpeed";
+        protected override string ModId => "Daxisaurus.Timberborn.ConfigurableGameSpeeds";
 
         private void UpdateRuntimeValues() {
             ApplyConfiguredSpeeds(NormalSpeed.Value, DoubleSpeed.Value, TripleSpeed.Value);
         }
 
         internal static void ApplyConfiguredSpeeds(int normal, int doubleSpeed, int tripleSpeed) {
-            ConfigurableGameSpeedConfig.NormalSpeed = NormalizePositive(normal);
-            ConfigurableGameSpeedConfig.DoubleSpeed = NormalizePositive(doubleSpeed);
-            ConfigurableGameSpeedConfig.TripleSpeed = NormalizePositive(tripleSpeed);
-            ConfigurableGameSpeedPanelButtons.Apply();
-            GameSpeedPresetButtonRegistry.RefreshAllInstances();
+            ConfigurableGameSpeedsConfig.NormalSpeed = NormalizePositive(normal);
+            ConfigurableGameSpeedsConfig.DoubleSpeed = NormalizePositive(doubleSpeed);
+            ConfigurableGameSpeedsConfig.TripleSpeed = NormalizePositive(tripleSpeed);
+            ConfigurableGameSpeedsPanelButtons.Apply();
+            ConfigurableGameSpeedsPresetButtonRegistry.RefreshAllInstances();
         }
 
         internal static int NormalizePositive(int value) => value > 0 ? value : 1;
@@ -63,39 +63,39 @@ namespace Timberborn.Mods.Daxisaurus.ConfigurableGameSpeed {
     /// <summary>
     ///   Mod Settings UI often commits values without raising ValueChanged on each edit; polling catches Apply.
     /// </summary>
-    internal static class ConfigurableGameSpeedRuntimeSync {
+    internal static class ConfigurableGameSpeedsRuntimeSync {
         internal static void PollModSettingsIfNeeded() {
-            var owner = ConfigurableGameSpeedSettings.Instance;
+            var owner = ConfigurableGameSpeedsSettings.Instance;
             if (owner == null) {
                 return;
             }
 
-            var nextNormal = ConfigurableGameSpeedSettings.NormalizePositive(owner.NormalSpeed.Value);
-            var nextDouble = ConfigurableGameSpeedSettings.NormalizePositive(owner.DoubleSpeed.Value);
-            var nextTriple = ConfigurableGameSpeedSettings.NormalizePositive(owner.TripleSpeed.Value);
+            var nextNormal = ConfigurableGameSpeedsSettings.NormalizePositive(owner.NormalSpeed.Value);
+            var nextDouble = ConfigurableGameSpeedsSettings.NormalizePositive(owner.DoubleSpeed.Value);
+            var nextTriple = ConfigurableGameSpeedsSettings.NormalizePositive(owner.TripleSpeed.Value);
 
-            if (nextNormal == ConfigurableGameSpeedConfig.NormalSpeed
-                && nextDouble == ConfigurableGameSpeedConfig.DoubleSpeed
-                && nextTriple == ConfigurableGameSpeedConfig.TripleSpeed) {
+            if (nextNormal == ConfigurableGameSpeedsConfig.NormalSpeed
+                && nextDouble == ConfigurableGameSpeedsConfig.DoubleSpeed
+                && nextTriple == ConfigurableGameSpeedsConfig.TripleSpeed) {
                 return;
             }
 
-            ConfigurableGameSpeedSettings.ApplyConfiguredSpeeds(nextNormal, nextDouble, nextTriple);
+            ConfigurableGameSpeedsSettings.ApplyConfiguredSpeeds(nextNormal, nextDouble, nextTriple);
         }
     }
 
     [Context("MainMenu")]
     [Context("Game")]
-    internal class ConfigurableGameSpeedSettingsConfigurator : IConfigurator {
+    internal class ConfigurableGameSpeedsSettingsConfigurator : IConfigurator {
         public void Configure(IContainerDefinition containerDefinition) {
-            containerDefinition.Bind<ConfigurableGameSpeedInitializer>().AsSingleton();
-            containerDefinition.Bind<ConfigurableGameSpeedSettings>().AsSingleton();
+            containerDefinition.Bind<ConfigurableGameSpeedsInitializer>().AsSingleton();
+            containerDefinition.Bind<ConfigurableGameSpeedsSettings>().AsSingleton();
         }
     }
 
-    internal class ConfigurableGameSpeedInitializer {
-        public ConfigurableGameSpeedInitializer(ConfigurableGameSpeedSettings settings) {
-            ConfigurableGameSpeedSettings.ApplyConfiguredSpeeds(settings.NormalSpeed.Value, settings.DoubleSpeed.Value, settings.TripleSpeed.Value);
+    internal class ConfigurableGameSpeedsInitializer {
+        public ConfigurableGameSpeedsInitializer(ConfigurableGameSpeedsSettings settings) {
+            ConfigurableGameSpeedsSettings.ApplyConfiguredSpeeds(settings.NormalSpeed.Value, settings.DoubleSpeed.Value, settings.TripleSpeed.Value);
         }
     }
 }
