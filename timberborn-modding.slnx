@@ -4,6 +4,6 @@
   <Project Path="Timberborn.ModExamples.HelloWorld.csproj" />
   <Project Path="Timberborn.ModdingTools.AssetsManagement.csproj" />
   <Project Path="Timberborn.ModdingTools.Common.csproj" />
-  <Project Path="Timberborn.ModdingTools.AssetsImporting.csproj" />
   <Project Path="Timberborn.Mods.Daxisaurus.ConfigurableGameSpeeds.csproj" />
+  <Project Path="Timberborn.ModdingTools.AssetsImporting.csproj" />
 </Solution>
