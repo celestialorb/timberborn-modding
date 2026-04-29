@@ -2,6 +2,16 @@
     "name": "Timberborn.Mods.Daxisaurus.GhostPlanner",
     "references": [
         "UnityEngine",
-        "Timberborn.Modding"
+        "UnityEngine.UIElements",
+        "Timberborn.Modding",
+        "Bindito.Core",
+        "Timberborn.EntityPanelSystem",
+        "Timberborn.BaseComponentSystem",
+        "Timberborn.CoreUI",
+        "Timberborn.ConstructionSites",
+        "Timberborn.Buildings",
+        "Timberborn.ScienceSystem",
+        "Timberborn.Localization",
+        "Timberborn.TemplateSystem"
     ]
 }
