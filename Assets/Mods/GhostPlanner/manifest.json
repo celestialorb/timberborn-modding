@@ -1,0 +1,13 @@
+{
+  "Name": "GhostPlanner",
+  "Version": "1.0.0.0",
+  "Id": "Daxisaurus.Timberborn.GhostPlanner",
+  "MinimumGameVersion": "1.0.7.0",
+  "Description": "Plan your buildings before you unlock them!",
+  "RequiredMods": [
+    {
+      "Id": "Harmony",
+      "MinimumVersion": "2.4.1"
+    }
+  ]
+}

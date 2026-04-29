@@ -1,0 +1,7 @@
+{
+    "name": "Timberborn.Mods.Daxisaurus.GhostPlanner",
+    "references": [
+        "UnityEngine",
+        "Timberborn.Modding"
+    ]
+}
