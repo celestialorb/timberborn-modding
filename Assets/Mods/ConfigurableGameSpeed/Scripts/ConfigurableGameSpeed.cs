@@ -9,12 +9,12 @@ using Timberborn.TimeSystemUI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
+namespace Timberborn.Mods.Daxisaurus.ConfigurableGameSpeed {
     /// <summary>
     ///   Reads TimeSpeedKeyFormat via reflection. Direct field access from mod assemblies can throw
     ///   <see cref="FieldAccessException" /> at runtime.
     /// </summary>
-    internal static class TimeSpeedKeyFormatAccessor {
+    internal static class ConfigurableGameSpeedKeyFormatAccessor {
         static string _template;
         static bool _resolved;
 
@@ -36,28 +36,28 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
                     _template = fieldInfo.GetValue(null) as string;
                 }
                 catch (Exception ex) {
-                    UnityEngine.Debug.LogWarning($"TimeSpeeder: could not read TimeSpeedKeyFormat via reflection: {ex.Message}");
+                    UnityEngine.Debug.LogWarning($"ConfigurableGameSpeed: could not read TimeSpeedKeyFormat via reflection: {ex.Message}");
                 }
             }
             else {
-                UnityEngine.Debug.LogWarning("TimeSpeeder: TimeSpeedKeyFormat field not found.");
+                UnityEngine.Debug.LogWarning("ConfigurableGameSpeed: TimeSpeedKeyFormat field not found.");
             }
 
             if (string.IsNullOrEmpty(_template)) {
                 UnityEngine.Debug.LogWarning(
-                    "TimeSpeeder: TimeSpeedKeyFormat unavailable; hotkeys may not match preset slots.");
+                    "ConfigurableGameSpeed: TimeSpeedKeyFormat unavailable; hotkeys may not match preset slots.");
                 _template = "{0}";
             }
         }
     }
 
-    internal class TimeSpeederPlaceholder : IModStarter {
+    internal class ConfigurableGameSpeedModStarter : IModStarter {
         public void StartMod(IModEnvironment modEnvironment) {
-            UnityEngine.Debug.Log("TimeSpeeder mod started!");
+            UnityEngine.Debug.Log("ConfigurableGameSpeed mod started!");
 
-            TimeSpeederRuntimePoll.EnsureStarted();
+            ConfigurableGameSpeedRuntimePoll.EnsureStarted();
 
-            var harmony = new Harmony("com.daxisaurus.timberborn.timespeeder");
+            var harmony = new Harmony("com.daxisaurus.timberborn.configurablegamespeed");
             harmony.PatchAll();
         }
     }
@@ -66,7 +66,7 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
     ///   Refreshes cached multipliers inside <see cref="TimeSpeedButton" /> wrappers when settings change
     ///   mid-session (Vanilla UI compares current speed to these values for preset highlighting).
     /// </summary>
-    internal static class TimeSpeedButtonMultiplierRegistry {
+    internal static class GameSpeedPresetButtonRegistry {
         sealed class Entry {
             internal WeakReference<TimeSpeedButton> ButtonRef;
             internal FieldInfo SpeedField;
@@ -101,7 +101,7 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
 
             if (speedField == null) {
                 UnityEngine.Debug.LogWarning(
-                    "TimeSpeeder: could not locate int speed field on TimeSpeedButton; preset highlighting may desync until reload.");
+                    "ConfigurableGameSpeed: could not locate int speed field on TimeSpeedButton; preset highlighting may desync until reload.");
                 return;
             }
 
@@ -121,10 +121,10 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
                 }
 
                 try {
-                    entry.SpeedField.SetValue(tsb, TimeSpeederPresetMap.GetPresetSpeedForIndex(entry.Index));
+                    entry.SpeedField.SetValue(tsb, ConfigurableGameSpeedPresetMap.GetPresetSpeedForIndex(entry.Index));
                 }
                 catch (Exception ex) {
-                    UnityEngine.Debug.LogWarning($"TimeSpeeder: failed to refresh TimeSpeedButton multiplier: {ex.Message}");
+                    UnityEngine.Debug.LogWarning($"ConfigurableGameSpeed: failed to refresh TimeSpeedButton multiplier: {ex.Message}");
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
         }
     }
 
-    internal static class TimeSpeederRuntimePoll {
+    internal static class ConfigurableGameSpeedRuntimePoll {
         static GameObject _host;
 
         internal static void EnsureStarted() {
@@ -148,15 +148,15 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
                 return;
             }
 
-            _host = new GameObject("TimeSpeeder.SettingsPoll");
+            _host = new GameObject("ConfigurableGameSpeed.SettingsPoll");
             UnityEngine.Object.DontDestroyOnLoad(_host);
             _host.hideFlags = HideFlags.HideAndDontSave | HideFlags.HideInHierarchy;
-            _host.AddComponent<TimeSpeederRuntimePollBehaviour>();
+            _host.AddComponent<ConfigurableGameSpeedPollBehaviour>();
         }
 
-        sealed class TimeSpeederRuntimePollBehaviour : MonoBehaviour {
+        sealed class ConfigurableGameSpeedPollBehaviour : MonoBehaviour {
             void Update() {
-                TimeSpeederRuntimeSync.PollModSettingsIfNeeded();
+                ConfigurableGameSpeedRuntimeSync.PollModSettingsIfNeeded();
             }
         }
     }
@@ -175,7 +175,7 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
                 return true;
             }
 
-            var speed = TimeSpeederPresetMap.GetPresetSpeedForIndex(index);
+            var speed = ConfigurableGameSpeedPresetMap.GetPresetSpeedForIndex(index);
             button.name = $"Speed{index}";
             button.text = $"{speed}x";
             var capturedIndex = index;
@@ -183,8 +183,8 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
                 .Method(
                     "CreateAndBind",
                     button,
-                    TimeSpeedKeyFormatAccessor.FormatForIndex(index),
-                    new Action(() => clickCallback(TimeSpeederPresetMap.GetPresetSpeedForIndex(capturedIndex))))
+                    ConfigurableGameSpeedKeyFormatAccessor.FormatForIndex(index),
+                    new Action(() => clickCallback(ConfigurableGameSpeedPresetMap.GetPresetSpeedForIndex(capturedIndex))))
                 .GetValue();
             __result = new TimeSpeedButton(button, speed);
             return false;
@@ -197,7 +197,7 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
             AccessTools.Constructor(typeof(TimeSpeedButton), new[] { typeof(Button), typeof(int) });
 
         static void Postfix(TimeSpeedButton __instance, Button button, int timeSpeed) {
-            TimeSpeedButtonMultiplierRegistry.RegisterFromConstructor(__instance, button, timeSpeed);
+            GameSpeedPresetButtonRegistry.RegisterFromConstructor(__instance, button, timeSpeed);
         }
     }
 
@@ -210,51 +210,51 @@ namespace Timberborn.Mods.Daxisaurus.TimeSpeeder {
             var root = RootRef(__instance);
 
             if (root == null) {
-                UnityEngine.Debug.LogWarning("TimeSpeeder could not access SpeedControlPanel root.");
+                UnityEngine.Debug.LogWarning("ConfigurableGameSpeed could not access SpeedControlPanel root.");
                 return;
             }
 
-            TimeSpeederSpeedButtons.CacheFrom(root);
+            ConfigurableGameSpeedPanelButtons.CacheFrom(root);
         }
     }
-}
 
-public static class TimeSpeederPresetMap {
-    public static int GetPresetSpeedForIndex(int index) {
-        return index switch {
-            0 => 0,
-            1 => TimeSpeederConfig.NormalSpeed,
-            2 => TimeSpeederConfig.DoubleSpeed,
-            3 => TimeSpeederConfig.TripleSpeed,
-            _ => Math.Max(index, 1)
-        };
-    }
-}
-
-public static class TimeSpeederSpeedButtons {
-    public static Button NormalButton;
-    public static Button DoubleButton;
-    public static Button TripleButton;
-
-    public static void CacheFrom(VisualElement root) {
-        NormalButton = root.Q<Button>("Speed1");
-        DoubleButton = root.Q<Button>("Speed2");
-        TripleButton = root.Q<Button>("Speed3");
-
-        Apply();
+    public static class ConfigurableGameSpeedPresetMap {
+        public static int GetPresetSpeedForIndex(int index) {
+            return index switch {
+                0 => 0,
+                1 => ConfigurableGameSpeedConfig.NormalSpeed,
+                2 => ConfigurableGameSpeedConfig.DoubleSpeed,
+                3 => ConfigurableGameSpeedConfig.TripleSpeed,
+                _ => Math.Max(index, 1)
+            };
+        }
     }
 
-    public static void Apply() {
-        if (NormalButton != null) {
-            NormalButton.text = $"{TimeSpeederConfig.NormalSpeed}x";
+    public static class ConfigurableGameSpeedPanelButtons {
+        public static Button NormalButton;
+        public static Button DoubleButton;
+        public static Button TripleButton;
+
+        public static void CacheFrom(VisualElement root) {
+            NormalButton = root.Q<Button>("Speed1");
+            DoubleButton = root.Q<Button>("Speed2");
+            TripleButton = root.Q<Button>("Speed3");
+
+            Apply();
         }
 
-        if (DoubleButton != null) {
-            DoubleButton.text = $"{TimeSpeederConfig.DoubleSpeed}x";
-        }
+        public static void Apply() {
+            if (NormalButton != null) {
+                NormalButton.text = $"{ConfigurableGameSpeedConfig.NormalSpeed}x";
+            }
 
-        if (TripleButton != null) {
-            TripleButton.text = $"{TimeSpeederConfig.TripleSpeed}x";
+            if (DoubleButton != null) {
+                DoubleButton.text = $"{ConfigurableGameSpeedConfig.DoubleSpeed}x";
+            }
+
+            if (TripleButton != null) {
+                TripleButton.text = $"{ConfigurableGameSpeedConfig.TripleSpeed}x";
+            }
         }
     }
 }

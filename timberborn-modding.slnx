@@ -5,5 +5,5 @@
   <Project Path="Timberborn.ModdingTools.AssetsManagement.csproj" />
   <Project Path="Timberborn.ModdingTools.Common.csproj" />
   <Project Path="Timberborn.ModdingTools.AssetsImporting.csproj" />
-  <Project Path="Timberborn.Mods.Daxisaurus.TimeSpeeder.csproj" />
+  <Project Path="Timberborn.Mods.Daxisaurus.ConfigurableGameSpeed.csproj" />
 </Solution>
