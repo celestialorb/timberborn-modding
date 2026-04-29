@@ -11,6 +11,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
     public sealed class GhostPlannerConfigurator : Configurator {
 
         protected override void Configure() {
+            Bind<GhostPlannerGameServices>().AsSingleton();
             Bind<GhostPlannerConstructionUnlockFragment>().AsSingleton();
             MultiBind<EntityPanelModule>().ToProvider<EntityPanelModuleProvider>().AsSingleton();
         }

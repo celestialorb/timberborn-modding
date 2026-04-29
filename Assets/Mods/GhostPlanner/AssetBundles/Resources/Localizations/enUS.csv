@@ -1,3 +1,4 @@
 ID,Text,Comment
 GhostPlanner.EntityPanel.Hint,"This blueprint is not researched yet. Pay science here to allow deliveries and construction.",Ghost entity panel
 GhostPlanner.EntityPanel.UnlockButton,"Unlock blueprint ({0} science)",Primary button; {0} is ScienceCost
+GhostPlanner.Status.ScienceLocked,"Blueprint locked — pay {0} science (entity panel) to build.",Floating icon tooltip when GhostPlanner blocks construction until unlock
