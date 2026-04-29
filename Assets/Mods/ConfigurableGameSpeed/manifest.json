@@ -1,7 +1,7 @@
 {
-  "Name": "ConfigurableGameSpeed",
+  "Name": "ConfigurableGameSpeeds",
   "Version": "0.0.0",
-  "Id": "Daxisaurus.Timberborn.ConfigurableGameSpeed",
+  "Id": "Daxisaurus.Timberborn.ConfigurableGameSpeeds",
   "MinimumGameVersion": "1.0.7.0",
   "Description": "A mod that allows you to configure the preset game speed buttons!",
   "RequiredMods": [
