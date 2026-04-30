@@ -16,6 +16,10 @@
         "Timberborn.EntitySystem",
         "Timberborn.AssetSystem",
         "Timberborn.StatusSystem",
-        "Timberborn.SingletonSystem"
+        "Timberborn.SingletonSystem",
+        "Timberborn.ToolSystem",
+        "Timberborn.ToolButtonSystem",
+        "Timberborn.BlockObjectTools",
+        "Timberborn.BlueprintSystem"
     ]
 }

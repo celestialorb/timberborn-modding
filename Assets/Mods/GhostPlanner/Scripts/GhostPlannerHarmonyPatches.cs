@@ -7,7 +7,6 @@ using Timberborn.Buildings;
 using Timberborn.ConstructionSites;
 using Timberborn.Goods;
 using Timberborn.ScienceSystem;
-using Timberborn.ToolSystem;
 
 namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
 
@@ -64,24 +63,6 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
 
         static void Postfix(BuildingUnlockingService __instance) {
             GhostPlannerUnlockServiceHolder.Instance = __instance;
-        }
-
-    }
-
-    /// <summary>
-    ///   Lets building tools stay usable without paying science first (vanilla locks via
-    ///   <c>BuildingToolLocker.ShouldLock</c>).
-    /// </summary>
-    [HarmonyPatch]
-    internal static class BuildingToolLockerShouldLockPatch {
-
-        static MethodBase TargetMethod() =>
-            AccessTools.Method(AccessTools.TypeByName("Timberborn.BuildingTools.BuildingToolLocker"), "ShouldLock");
-
-        static bool Prefix(ITool tool, ref bool __result) {
-            _ = tool;
-            __result = false;
-            return false;
         }
 
     }
