@@ -12,13 +12,13 @@ using Timberborn.TemplateSystem;
 using Timberborn.ToolButtonSystem;
 using Timberborn.ToolSystem;
 
-namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
+namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
     /// <summary>
-    ///   Keeps building tools <strong>functionally</strong> unlocked (GhostPlanner placement) while restoring the
+    ///   Keeps building tools <strong>functionally</strong> unlocked (ColonyPlanner placement) while restoring the
     ///   bottom-bar <c>button--locked</c> styling for blueprints that still need science payment.
     /// </summary>
-    static class GhostPlannerToolUnlockVisualPatches {
+    static class ColonyPlannerToolUnlockVisualPatches {
 
         internal static ToolUnlockingService ToolUnlockingServiceInstance { get; private set; }
 
@@ -42,7 +42,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 }
 
                 throw new InvalidOperationException(
-                    "GhostPlanner: could not find ToolUnlockingService(EventBus, IEnumerable<IToolLocker>)");
+                    "ColonyPlanner: could not find ToolUnlockingService(EventBus, IEnumerable<IToolLocker>)");
             }
 
             static void Postfix(ToolUnlockingService __instance) {
@@ -66,11 +66,11 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
 
         /// <summary>
         ///   Vanilla adds tools to <see cref="ToolUnlockingService" /> active lockers and posts <see cref="ToolLockedEvent" />.
-        ///   GhostPlanner skips the dictionary entry so <see cref="ToolUnlockingService.IsLocked" /> stays false (placement works),
+        ///   ColonyPlanner skips the dictionary entry so <see cref="ToolUnlockingService.IsLocked" /> stays false (placement works),
         ///   but still raises <see cref="ToolLockedEvent" /> so tool buttons get <c>button--locked</c>.
         /// </summary>
         [HarmonyPatch(typeof(ToolUnlockingService), nameof(ToolUnlockingService.LockIfNeeded))]
-        static class ToolUnlockingServiceLockIfNeededGhostPlannerPatch {
+        static class ToolUnlockingServiceLockIfNeededColonyPlannerPatch {
 
             static bool Prefix(ITool tool, ToolUnlockingService __instance) {
                 if (tool is not BlockObjectTool blockTool) {
@@ -86,7 +86,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                     return true;
                 }
 
-                var unlockService = GhostPlannerUnlockServiceHolder.Instance;
+                var unlockService = ColonyPlannerUnlockServiceHolder.Instance;
                 if (unlockService == null) {
                     return true;
                 }
@@ -163,7 +163,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 null);
             if (post == null) {
                 throw new InvalidOperationException(
-                    $"GhostPlanner: EventBus.Post(object) not found on {runtimeType.FullName}");
+                    $"ColonyPlanner: EventBus.Post(object) not found on {runtimeType.FullName}");
             }
 
             _cachedPostObjectEventBusType = runtimeType;

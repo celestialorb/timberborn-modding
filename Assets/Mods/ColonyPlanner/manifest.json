@@ -1,7 +1,7 @@
 {
-  "Name": "GhostPlanner",
+  "Name": "Colony Planner",
   "Version": "1.0.0.0",
-  "Id": "Daxisaurus.Timberborn.GhostPlanner",
+  "Id": "Daxisaurus.Timberborn.ColonyPlanner",
   "MinimumGameVersion": "1.0.7.0",
   "Description": "Plan your buildings before you unlock them!",
   "RequiredMods": [

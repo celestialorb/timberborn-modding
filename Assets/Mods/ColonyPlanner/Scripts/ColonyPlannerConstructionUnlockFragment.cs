@@ -11,16 +11,16 @@ using Timberborn.TemplateSystem;
 
 using UnityEngine.UIElements;
 
-namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
+namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
     /// <summary>
     ///   Entity panel section for unfinished buildings whose blueprint is still locked: panel chrome matches
     ///   vanilla sections (<c>bg-sub-box--green</c>); inner button opens the vanilla unlock flow.
     /// </summary>
-    sealed class GhostPlannerConstructionUnlockFragment : IEntityPanelFragment {
+    sealed class ColonyPlannerConstructionUnlockFragment : IEntityPanelFragment {
 
         /// <summary>Path passed to <see cref="IAssetLoader"/> for USS under AssetBundles/Resources (matches HelloWorld style).</summary>
-        const string UnlockStylesheetAssetPath = "UI/Styles/GhostPlannerEntityPanel";
+        const string UnlockStylesheetAssetPath = "UI/Styles/ColonyPlannerEntityPanel";
 
         static readonly string SubPanelClass = "entity-sub-panel";
         static readonly string SubBoxGreenClass = "bg-sub-box--green";
@@ -37,7 +37,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
         BuildingSpec _buildingSpec;
         bool _panelActive;
 
-        internal GhostPlannerConstructionUnlockFragment(
+        internal ColonyPlannerConstructionUnlockFragment(
             BuildingUnlockingService buildingUnlockingService,
             DialogBoxShower dialogBoxShower,
             IAssetLoader assetLoader,
@@ -52,14 +52,14 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             _root = new NineSliceVisualElement();
             _root.AddToClassList(SubPanelClass);
             _root.AddToClassList(SubBoxGreenClass);
-            _root.AddToClassList("ghost-planner-unlock-panel");
-            AttachGhostPlannerStylesheet();
+            _root.AddToClassList("colony-planner-unlock-panel");
+            AttachColonyPlannerStylesheet();
             _root.style.flexDirection = FlexDirection.Column;
             _root.style.alignItems = Align.Stretch;
             _root.ToggleDisplayStyle(false);
 
             _unlockButton = new Button();
-            _unlockButton.AddToClassList("ghost-planner-unlock__action");
+            _unlockButton.AddToClassList("colony-planner-unlock__action");
             _unlockButton.RegisterCallback<ClickEvent>(_ => OnUnlockClicked());
             _root.Add(_unlockButton);
 
@@ -73,13 +73,13 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 return;
             }
 
-            _buildingSpec = GhostPlannerBuildingSpecAccessor.FromConstructionSite(_constructionSite);
+            _buildingSpec = ColonyPlannerBuildingSpecAccessor.FromConstructionSite(_constructionSite);
             if (_buildingSpec == null || _buildingSpec.ScienceCost <= 0) {
                 ClearFragment();
                 return;
             }
 
-            if (!GhostPlannerUnlockGate.IsConstructionWorkBlocked(_constructionSite)) {
+            if (!ColonyPlannerUnlockGate.IsConstructionWorkBlocked(_constructionSite)) {
                 ClearFragment();
                 return;
             }
@@ -101,7 +101,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 return;
             }
 
-            if (!GhostPlannerUnlockGate.IsConstructionWorkBlocked(_constructionSite)) {
+            if (!ColonyPlannerUnlockGate.IsConstructionWorkBlocked(_constructionSite)) {
                 ClearFragment();
                 return;
             }
@@ -114,7 +114,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 return;
             }
 
-            _unlockButton.text = _loc.T("GhostPlanner.EntityPanel.UnlockAction");
+            _unlockButton.text = _loc.T("ColonyPlanner.EntityPanel.UnlockAction");
             _unlockButton.SetEnabled(_buildingUnlockingService.Unlockable(_buildingSpec));
         }
 
@@ -168,7 +168,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             return templateSpec?.TemplateName ?? string.Empty;
         }
 
-        void AttachGhostPlannerStylesheet() {
+        void AttachColonyPlannerStylesheet() {
             var sheet = _assetLoader.LoadSafe<StyleSheet>(UnlockStylesheetAssetPath);
             if (sheet != null) {
                 _root.styleSheets.Add(sheet);

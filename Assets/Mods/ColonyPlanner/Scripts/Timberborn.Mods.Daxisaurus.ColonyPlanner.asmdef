@@ -1,5 +1,5 @@
 {
-    "name": "Timberborn.Mods.Daxisaurus.GhostPlanner",
+    "name": "Timberborn.Mods.Daxisaurus.ColonyPlanner",
     "references": [
         "UnityEngine",
         "UnityEngine.UIElements",

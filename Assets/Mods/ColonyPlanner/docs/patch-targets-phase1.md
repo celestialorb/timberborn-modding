@@ -1,4 +1,4 @@
-# Phase 1 — Patch targets (GhostPlanner / pre-unlock placement)
+# Phase 1 — Patch targets (ColonyPlanner / pre-unlock placement)
 
 Analysis used **`dotnet ilspycmd`** against assemblies under  
 `/steamapps/common/Timberborn/Timberborn_Data/Managed`  

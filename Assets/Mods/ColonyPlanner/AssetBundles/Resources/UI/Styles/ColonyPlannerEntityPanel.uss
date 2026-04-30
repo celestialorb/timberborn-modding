@@ -1,13 +1,13 @@
-/* GhostPlanner — unlock row: outer panel uses vanilla bg-sub-box--green; inner control is the accent button. */
+/* ColonyPlanner — unlock row: outer panel uses vanilla bg-sub-box--green; inner control is the accent button. */
 
-.ghost-planner-unlock-panel {
+.colony-planner-unlock-panel {
     flex-direction: column;
     align-items: stretch;
     flex-shrink: 0;
 }
 
 /* Inset action control — reads as a button inside the framed section (does not replace panel chrome). */
-.ghost-planner-unlock__action {
+.colony-planner-unlock__action {
     align-self: stretch;
     margin-top: 8px;
     margin-bottom: 8px;
@@ -42,7 +42,7 @@
     transition-property: background-color, border-color;
 }
 
-.ghost-planner-unlock__action:hover {
+.colony-planner-unlock__action:hover {
     background-color: rgb(214, 182, 148);
     border-left-color: rgb(72, 50, 38);
     border-right-color: rgb(72, 50, 38);
@@ -50,13 +50,13 @@
     border-bottom-color: rgb(48, 34, 26);
 }
 
-.ghost-planner-unlock__action:active {
+.colony-planner-unlock__action:active {
     background-color: rgb(172, 138, 106);
     border-top-color: rgb(52, 38, 28);
     border-bottom-color: rgb(82, 62, 46);
 }
 
-.ghost-planner-unlock__action:disabled {
+.colony-planner-unlock__action:disabled {
     background-color: rgb(168, 146, 126);
     border-left-color: rgb(88, 74, 64);
     border-right-color: rgb(88, 74, 64);
@@ -66,7 +66,7 @@
     opacity: 0.65;
 }
 
-.ghost-planner-unlock__action .unity-text-element {
+.colony-planner-unlock__action .unity-text-element {
     padding: 0;
     margin: 0;
     white-space: normal;

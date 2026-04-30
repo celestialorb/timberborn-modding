@@ -8,12 +8,12 @@ using Timberborn.ConstructionSites;
 using Timberborn.Goods;
 using Timberborn.ScienceSystem;
 
-namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
+namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
     /// <summary>
     ///   Resolves <see cref="BuildingSpec" /> from construction-site-related components via vanilla fields.
     /// </summary>
-    internal static class GhostPlannerBuildingSpecAccessor {
+    internal static class ColonyPlannerBuildingSpecAccessor {
 
         static readonly FieldInfo ConstructionSiteBuildingSpecField =
             AccessTools.Field(typeof(ConstructionSite), "_buildingSpec");
@@ -27,15 +27,15 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
     /// <summary>
     ///   Shared rule: block construction work when vanilla treats this blueprint as not science-unlocked.
     /// </summary>
-    internal static class GhostPlannerUnlockGate {
+    internal static class ColonyPlannerUnlockGate {
 
         internal static bool IsConstructionWorkBlocked(ConstructionSite constructionSite) {
-            var unlockService = GhostPlannerUnlockServiceHolder.Instance;
+            var unlockService = ColonyPlannerUnlockServiceHolder.Instance;
             if (unlockService == null) {
                 return false;
             }
 
-            var buildingSpec = GhostPlannerBuildingSpecAccessor.FromConstructionSite(constructionSite);
+            var buildingSpec = ColonyPlannerBuildingSpecAccessor.FromConstructionSite(constructionSite);
             if (buildingSpec == null) {
                 return false;
             }
@@ -48,7 +48,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
     /// <summary>
     ///   Cached <see cref="BuildingUnlockingService" /> instance for construction patches.
     /// </summary>
-    internal static class GhostPlannerUnlockServiceHolder {
+    internal static class ColonyPlannerUnlockServiceHolder {
 
         internal static BuildingUnlockingService Instance { get; set; }
 
@@ -62,7 +62,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
     internal static class BuildingUnlockingServiceLoadPatch {
 
         static void Postfix(BuildingUnlockingService __instance) {
-            GhostPlannerUnlockServiceHolder.Instance = __instance;
+            ColonyPlannerUnlockServiceHolder.Instance = __instance;
         }
 
     }
@@ -75,7 +75,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
 
         static bool Prefix(ConstructionSite __instance, float hours) {
             _ = hours;
-            return !GhostPlannerUnlockGate.IsConstructionWorkBlocked(__instance);
+            return !ColonyPlannerUnlockGate.IsConstructionWorkBlocked(__instance);
         }
 
     }
@@ -90,7 +90,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
     internal static class ConstructionSiteRemainingRequiredGoodsPatch {
 
         static bool Prefix(ConstructionSite __instance, SortedSet<GoodAmount> remainingGoods) {
-            if (!GhostPlannerUnlockGate.IsConstructionWorkBlocked(__instance)) {
+            if (!ColonyPlannerUnlockGate.IsConstructionWorkBlocked(__instance)) {
                 return true;
             }
 

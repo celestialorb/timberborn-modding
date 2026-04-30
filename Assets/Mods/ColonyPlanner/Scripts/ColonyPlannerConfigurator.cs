@@ -2,25 +2,25 @@ using Bindito.Core;
 
 using Timberborn.EntityPanelSystem;
 
-namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
+namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
     /// <summary>
-    ///   Registers gameplay UI for GhostPlanner (entity panel unlock controls).
+    ///   Registers gameplay UI for ColonyPlanner (entity panel unlock controls).
     /// </summary>
     [Context("Game")]
-    public sealed class GhostPlannerConfigurator : Configurator {
+    public sealed class ColonyPlannerConfigurator : Configurator {
 
         protected override void Configure() {
-            Bind<GhostPlannerGameServices>().AsSingleton();
-            Bind<GhostPlannerConstructionUnlockFragment>().AsSingleton();
+            Bind<ColonyPlannerGameServices>().AsSingleton();
+            Bind<ColonyPlannerConstructionUnlockFragment>().AsSingleton();
             MultiBind<EntityPanelModule>().ToProvider<EntityPanelModuleProvider>().AsSingleton();
         }
 
         sealed class EntityPanelModuleProvider : IProvider<EntityPanelModule> {
 
-            readonly GhostPlannerConstructionUnlockFragment _unlockFragment;
+            readonly ColonyPlannerConstructionUnlockFragment _unlockFragment;
 
-            public EntityPanelModuleProvider(GhostPlannerConstructionUnlockFragment unlockFragment) {
+            public EntityPanelModuleProvider(ColonyPlannerConstructionUnlockFragment unlockFragment) {
                 _unlockFragment = unlockFragment;
             }
 

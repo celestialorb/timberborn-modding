@@ -1,0 +1,3 @@
+ID,Text,Comment
+ColonyPlanner.EntityPanel.UnlockAction,"Unlock blueprint to build",Single-click strip; science cost shown in vanilla tooltip / confirm dialog
+ColonyPlanner.Status.ScienceLocked,"Blueprint locked — pay {0} science (entity panel) to build.",Floating icon tooltip when ColonyPlanner blocks construction until unlock

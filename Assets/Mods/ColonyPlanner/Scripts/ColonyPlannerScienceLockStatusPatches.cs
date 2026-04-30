@@ -6,14 +6,14 @@ using Timberborn.ConstructionSites;
 using Timberborn.Localization;
 using Timberborn.StatusSystem;
 
-namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
+namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
     /// <summary>
-    ///   Floating status icon for construction sites whose blueprint is not science-unlocked (GhostPlanner).
+    ///   Floating status icon for construction sites whose blueprint is not science-unlocked (ColonyPlanner).
     ///   Reuses vanilla sprite name <c>NotEnoughScience</c> (same asset as science shortage on producers),
     ///   with priority placement similar to pause.
     /// </summary>
-    static class GhostPlannerScienceLockStatusPatches {
+    static class ColonyPlannerScienceLockStatusPatches {
 
         static readonly ConditionalWeakTable<ConstructionSite, StatusToggle> ScienceLockToggles = new();
 
@@ -30,7 +30,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
         }
 
         /// <summary>
-        ///   Lazily registers when <see cref="GhostPlannerGameServices.Localization" /> was not ready at
+        ///   Lazily registers when <see cref="ColonyPlannerGameServices.Localization" /> was not ready at
         ///   <see cref="ConstructionSite.StartTickable" />; keeps toggle active state in sync.
         /// </summary>
         [HarmonyPatch(typeof(ConstructionSite), nameof(ConstructionSite.Tick))]
@@ -48,12 +48,12 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 return;
             }
 
-            var spec = GhostPlannerBuildingSpecAccessor.FromConstructionSite(site);
+            var spec = ColonyPlannerBuildingSpecAccessor.FromConstructionSite(site);
             if (spec == null || spec.ScienceCost <= 0) {
                 return;
             }
 
-            var loc = GhostPlannerGameServices.Localization;
+            var loc = ColonyPlannerGameServices.Localization;
             if (loc == null) {
                 return;
             }
@@ -65,7 +65,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             site.GetComponent<StatusSubject>().RegisterStatus(toggle);
             ScienceLockToggles.Add(site, toggle);
 
-            if (GhostPlannerUnlockGate.IsConstructionWorkBlocked(site)) {
+            if (ColonyPlannerUnlockGate.IsConstructionWorkBlocked(site)) {
                 toggle.Activate();
             }
             else {
@@ -74,7 +74,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
         }
 
         static string DescribeScienceLock(ILoc loc, int scienceCost) {
-            return loc.T("GhostPlanner.Status.ScienceLocked", scienceCost);
+            return loc.T("ColonyPlanner.Status.ScienceLocked", scienceCost);
         }
 
         static void SyncScienceLockToggle(ConstructionSite site) {
@@ -82,7 +82,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 return;
             }
 
-            var blocked = GhostPlannerUnlockGate.IsConstructionWorkBlocked(site);
+            var blocked = ColonyPlannerUnlockGate.IsConstructionWorkBlocked(site);
             if (toggle.IsActive == blocked) {
                 return;
             }
