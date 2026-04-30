@@ -26,7 +26,8 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
 
             public EntityPanelModule Get() {
                 var builder = new EntityPanelModule.Builder();
-                builder.AddMiddleFragment(_unlockFragment, 0);
+                // Footer tier (3000+) sorts last in Fragments — sits above DiagnosticFragments status strip.
+                builder.AddFooterFragment(_unlockFragment, 100_000);
                 return builder.Build();
             }
 

@@ -1,3 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:tb="clr-namespace:Timberborn.CoreUI;assembly=Timberborn.CoreUI" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <tb:NineSliceButton name="GhostPlannerUnlockButton" class="entity-fragment__button ghost-planner-unlock__button" />
-</ui:UXML>

@@ -1,22 +1,73 @@
-/* GhostPlanner — entity panel unlock segment (loaded via Resources). */
+/* GhostPlanner — unlock row: outer panel uses vanilla bg-sub-box--green; inner control is the accent button. */
 
-.ghost-planner-unlock {
-    background-color: rgb(104, 61, 44);
-    padding-top: 6px;
-    padding-bottom: 4px;
+.ghost-planner-unlock-panel {
+    flex-direction: column;
+    align-items: stretch;
+    flex-shrink: 0;
 }
 
-.ghost-planner-unlock__hint {
-    margin-bottom: 6px;
-    font-style: italic;
-    -unity-font-style: italic;
-    opacity: 0.95;
+/* Inset action control — reads as a button inside the framed section (does not replace panel chrome). */
+.ghost-planner-unlock__action {
+    align-self: stretch;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    min-height: 36px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+
+    background-color: rgb(198, 164, 132);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgb(62, 42, 30);
+    border-right-color: rgb(62, 42, 30);
+    border-top-color: rgb(92, 68, 52);
+    border-bottom-color: rgb(42, 28, 20);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    color: rgb(42, 28, 18);
+    -unity-font-style: bold;
+
+    transition-duration: 0.1s;
+    transition-property: background-color, border-color;
 }
 
-.ghost-planner-unlock__button {
-    margin-top: 2px;
+.ghost-planner-unlock__action:hover {
+    background-color: rgb(214, 182, 148);
+    border-left-color: rgb(72, 50, 38);
+    border-right-color: rgb(72, 50, 38);
+    border-top-color: rgb(108, 82, 64);
+    border-bottom-color: rgb(48, 34, 26);
 }
 
-.ghost-planner-unlock__button:disabled {
-    opacity: 0.55;
+.ghost-planner-unlock__action:active {
+    background-color: rgb(172, 138, 106);
+    border-top-color: rgb(52, 38, 28);
+    border-bottom-color: rgb(82, 62, 46);
+}
+
+.ghost-planner-unlock__action:disabled {
+    background-color: rgb(168, 146, 126);
+    border-left-color: rgb(88, 74, 64);
+    border-right-color: rgb(88, 74, 64);
+    border-top-color: rgb(98, 84, 74);
+    border-bottom-color: rgb(72, 62, 54);
+    color: rgb(72, 62, 54);
+    opacity: 0.65;
+}
+
+.ghost-planner-unlock__action .unity-text-element {
+    padding: 0;
+    margin: 0;
+    white-space: normal;
 }

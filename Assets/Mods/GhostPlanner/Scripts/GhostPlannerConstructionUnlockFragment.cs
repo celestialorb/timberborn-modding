@@ -9,14 +9,13 @@ using Timberborn.Localization;
 using Timberborn.ScienceSystem;
 using Timberborn.TemplateSystem;
 
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
 
     /// <summary>
-    ///   Entity panel section for unfinished buildings whose blueprint is still locked: offers an unlock
-    ///   action using the same science payment as vanilla pre-place dialogs.
+    ///   Entity panel section for unfinished buildings whose blueprint is still locked: panel chrome matches
+    ///   vanilla sections (<c>bg-sub-box--green</c>); inner button opens the vanilla unlock flow.
     /// </summary>
     sealed class GhostPlannerConstructionUnlockFragment : IEntityPanelFragment {
 
@@ -24,16 +23,14 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
         const string UnlockStylesheetAssetPath = "UI/Styles/GhostPlannerEntityPanel";
 
         static readonly string SubPanelClass = "entity-sub-panel";
-        static readonly string SubBoxClass = "bg-sub-box";
+        static readonly string SubBoxGreenClass = "bg-sub-box--green";
 
         readonly BuildingUnlockingService _buildingUnlockingService;
         readonly DialogBoxShower _dialogBoxShower;
         readonly IAssetLoader _assetLoader;
-        readonly VisualElementLoader _visualElementLoader;
         readonly ILoc _loc;
 
         VisualElement _root;
-        Label _hintLabel;
         Button _unlockButton;
 
         ConstructionSite _constructionSite;
@@ -44,46 +41,25 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             BuildingUnlockingService buildingUnlockingService,
             DialogBoxShower dialogBoxShower,
             IAssetLoader assetLoader,
-            VisualElementLoader visualElementLoader,
             ILoc loc) {
             _buildingUnlockingService = buildingUnlockingService;
             _dialogBoxShower = dialogBoxShower;
             _assetLoader = assetLoader;
-            _visualElementLoader = visualElementLoader;
             _loc = loc;
         }
 
         public VisualElement InitializeFragment() {
             _root = new NineSliceVisualElement();
             _root.AddToClassList(SubPanelClass);
-            _root.AddToClassList(SubBoxClass);
-            _root.AddToClassList("ghost-planner-unlock");
+            _root.AddToClassList(SubBoxGreenClass);
+            _root.AddToClassList("ghost-planner-unlock-panel");
             AttachGhostPlannerStylesheet();
             _root.style.flexDirection = FlexDirection.Column;
             _root.style.alignItems = Align.Stretch;
             _root.ToggleDisplayStyle(false);
 
-            _hintLabel = new Label();
-            _hintLabel.AddToClassList("entity-fragment__label");
-            _hintLabel.AddToClassList("ghost-planner-unlock__hint");
-            _hintLabel.style.whiteSpace = WhiteSpace.Normal;
-            _root.Add(_hintLabel);
-
-            // NineSliceButton ctor is not callable from mod assemblies; load via UXML (CoreUI instantiates).
-            // CloneTree root may be a wrapper (not Button); resolve the named control before reparenting.
-            var unlockTreeRoot = _visualElementLoader.LoadVisualElement("GhostPlannerUnlockButton");
-            _unlockButton = ResolveUnlockButton(unlockTreeRoot);
-            if (_unlockButton == null) {
-                Debug.LogError(
-                    "[GhostPlanner] GhostPlannerUnlockButton UXML must expose a Unity UI Toolkit Button named \"GhostPlannerUnlockButton\".");
-                _unlockButton = new Button();
-                _unlockButton.AddToClassList("entity-fragment__button");
-                _unlockButton.AddToClassList("ghost-planner-unlock__button");
-            }
-            else {
-                _unlockButton.RemoveFromHierarchy();
-            }
-
+            _unlockButton = new Button();
+            _unlockButton.AddToClassList("ghost-planner-unlock__action");
             _unlockButton.RegisterCallback<ClickEvent>(_ => OnUnlockClicked());
             _root.Add(_unlockButton);
 
@@ -109,7 +85,6 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             }
 
             _panelActive = true;
-            _hintLabel.text = _loc.T("GhostPlanner.EntityPanel.Hint");
             _root.ToggleDisplayStyle(true);
             RefreshUnlockUi();
         }
@@ -139,7 +114,7 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
                 return;
             }
 
-            _unlockButton.text = _loc.T("GhostPlanner.EntityPanel.UnlockButton", _buildingSpec.ScienceCost);
+            _unlockButton.text = _loc.T("GhostPlanner.EntityPanel.UnlockAction");
             _unlockButton.SetEnabled(_buildingUnlockingService.Unlockable(_buildingSpec));
         }
 
@@ -198,34 +173,6 @@ namespace Timberborn.Mods.Daxisaurus.GhostPlanner {
             if (sheet != null) {
                 _root.styleSheets.Add(sheet);
             }
-        }
-
-        static Button ResolveUnlockButton(VisualElement unlockTreeRoot) {
-            var named = unlockTreeRoot.Q<Button>("GhostPlannerUnlockButton");
-            if (named != null) {
-                return named;
-            }
-
-            if (unlockTreeRoot is Button rootButton) {
-                return rootButton;
-            }
-
-            return FindFirstButtonInSubtree(unlockTreeRoot);
-        }
-
-        static Button FindFirstButtonInSubtree(VisualElement element) {
-            if (element is Button button) {
-                return button;
-            }
-
-            foreach (var child in element.Children()) {
-                var found = FindFirstButtonInSubtree(child);
-                if (found != null) {
-                    return found;
-                }
-            }
-
-            return null;
         }
 
     }
