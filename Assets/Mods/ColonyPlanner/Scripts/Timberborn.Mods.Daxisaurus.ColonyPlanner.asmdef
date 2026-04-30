@@ -20,6 +20,8 @@
         "Timberborn.ToolSystem",
         "Timberborn.ToolButtonSystem",
         "Timberborn.BlockObjectTools",
-        "Timberborn.BlueprintSystem"
+        "Timberborn.BlueprintSystem",
+        "Timberborn.AlertPanelSystem",
+        "Timberborn.SelectionSystem"
     ]
 }
