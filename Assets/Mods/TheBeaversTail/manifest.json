@@ -1,0 +1,9 @@
+{
+  "Name": "The Beaver's Tail",
+  "Version": "0.1.0.0",
+  "Id": "CelestialOrb.Timberborn.TheBeaversTail",
+  "MinimumGameVersion": "1.0.0.0",
+  "Description": "Add storied tail decals and banners to inspire your beaver settlements!",
+  "RequiredMods": [],
+  "OptionalMods": []
+}
