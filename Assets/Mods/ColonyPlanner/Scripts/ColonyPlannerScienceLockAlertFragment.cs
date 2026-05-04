@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Timberborn.AlertPanelSystem;
 using Timberborn.ConstructionSites;
 using Timberborn.CoreUI;
-using Timberborn.EntitySystem;
 using Timberborn.Localization;
 using Timberborn.SelectionSystem;
 using Timberborn.StatusSystem;
@@ -21,7 +20,6 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
         const string ScienceStatusIconName = "NotEnoughScience";
 
-        readonly EntityRegistry _entityRegistry;
         readonly EntitySelectionService _entitySelection;
         readonly AlertPanelRowFactory _rowFactory;
         readonly StatusSpriteLoader _spriteLoader;
@@ -34,12 +32,10 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
         int _lastBlockedCount = -1;
 
         public ColonyPlannerScienceLockAlertFragment(
-            EntityRegistry entityRegistry,
             EntitySelectionService entitySelection,
             AlertPanelRowFactory rowFactory,
             StatusSpriteLoader spriteLoader,
             ILoc loc) {
-            _entityRegistry = entityRegistry;
             _entitySelection = entitySelection;
             _rowFactory = rowFactory;
             _spriteLoader = spriteLoader;
@@ -90,16 +86,7 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
         void RebuildBlockedSites() {
             _blockedSites.Clear();
-            foreach (var entity in _entityRegistry.Entities) {
-                if (entity.Deleted || !entity.Initialized) {
-                    continue;
-                }
-
-                var site = entity.GetComponentInChildren<ConstructionSite>(true);
-                if (site == null) {
-                    continue;
-                }
-
+            foreach (var site in ColonyPlannerConstructionSiteIndex.EnumerateAlive()) {
                 if (!ColonyPlannerUnlockGate.IsConstructionWorkBlocked(site)) {
                     continue;
                 }

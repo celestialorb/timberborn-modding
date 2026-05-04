@@ -24,6 +24,7 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
         static class ConstructionSiteStartTickableScienceLockPatch {
 
             static void Postfix(ConstructionSite __instance) {
+                ColonyPlannerConstructionSiteIndex.Register(__instance);
                 TryRegisterScienceLockToggle(__instance);
             }
 
