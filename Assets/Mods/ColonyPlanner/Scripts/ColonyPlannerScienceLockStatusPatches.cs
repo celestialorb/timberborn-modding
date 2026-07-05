@@ -20,7 +20,14 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
         /// <summary>
         ///   Registers once per site after vanilla registers lack-of-resources status.
         /// </summary>
-        [HarmonyPatch(typeof(ConstructionSite), nameof(ConstructionSite.StartTickable))]
+        /// <remarks>
+        ///   Targets <see cref="ConstructionSite.InitializeEntity" /> rather than the pre-1.1
+        ///   <c>StartTickable</c> method, which no longer exists on Timberborn 1.1+: the game split
+        ///   the old lifecycle hook into <c>Awake</c> (field setup only) and <c>InitializeEntity</c>
+        ///   (where vanilla now registers <c>_lackOfResourcesStatusToggle</c>), so
+        ///   <c>InitializeEntity</c> is the equivalent "everything is ready" hook.
+        /// </remarks>
+        [HarmonyPatch(typeof(ConstructionSite), nameof(ConstructionSite.InitializeEntity))]
         static class ConstructionSiteStartTickableScienceLockPatch {
 
             static void Postfix(ConstructionSite __instance) {
@@ -32,7 +39,7 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
         /// <summary>
         ///   Lazily registers when <see cref="ColonyPlannerGameServices.Localization" /> was not ready at
-        ///   <see cref="ConstructionSite.StartTickable" />; keeps toggle active state in sync.
+        ///   <see cref="ConstructionSite.InitializeEntity" />; keeps toggle active state in sync.
         /// </summary>
         [HarmonyPatch(typeof(ConstructionSite), nameof(ConstructionSite.Tick))]
         static class ConstructionSiteTickScienceLockPatch {
