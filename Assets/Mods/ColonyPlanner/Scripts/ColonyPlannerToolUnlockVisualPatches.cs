@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 using HarmonyLib;
@@ -15,8 +14,9 @@ using Timberborn.ToolSystem;
 namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
     /// <summary>
-    ///   Keeps building tools <strong>functionally</strong> unlocked (ColonyPlanner placement) while restoring the
-    ///   bottom-bar <c>button--locked</c> styling for blueprints that still need science payment.
+    ///   Lets ColonyPlanner buildings be placed while still science-locked (queued for later unlock) without
+    ///   disturbing vanilla lock tracking, so the bottom-bar <c>button--locked</c> styling and the tool-panel
+    ///   "Unlock: N" cost badge (<see cref="Timberborn.BuildingTools.BuildingPlacer" />) keep working normally.
     /// </summary>
     static class ColonyPlannerToolUnlockVisualPatches {
 
@@ -24,12 +24,7 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
 
         internal static ToolButtonService ToolButtonServiceInstance { get; private set; }
 
-        static readonly FieldInfo ToolUnlockingEventBusField =
-            AccessTools.Field(typeof(ToolUnlockingService), "_eventBus");
-
-        static Type _cachedPostObjectEventBusType;
-
-        static MethodInfo _cachedPostObjectMethod;
+        static MethodInfo _blockObjectToolPlaceMethod;
 
         [HarmonyPatch]
         static class ToolUnlockingServiceCtorCapturePatch {
@@ -65,45 +60,35 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
         }
 
         /// <summary>
-        ///   Vanilla adds tools to <see cref="ToolUnlockingService" /> active lockers and posts <see cref="ToolLockedEvent" />.
-        ///   ColonyPlanner skips the dictionary entry so <see cref="ToolUnlockingService.IsLocked" /> stays false (placement works),
-        ///   but still raises <see cref="ToolLockedEvent" /> so tool buttons get <c>button--locked</c>.
+        ///   Vanilla <see cref="BlockObjectTool" /> diverts placement into <see cref="ToolUnlockingService.TryToUnlock" />
+        ///   (pay-first dialog) whenever the tool is locked. ColonyPlanner buildings should place immediately regardless of
+        ///   lock state; the deferred science payment is handled after placement via the construction site's unlock fragment.
+        ///   Targeted by method name (rather than a typed parameter list) and invoked via reflection because
+        ///   <c>ActionCallback</c>/<c>Place</c> accessibility has varied across game versions.
         /// </summary>
-        [HarmonyPatch(typeof(ToolUnlockingService), nameof(ToolUnlockingService.LockIfNeeded))]
-        static class ToolUnlockingServiceLockIfNeededColonyPlannerPatch {
+        [HarmonyPatch(typeof(BlockObjectTool), "ActionCallback")]
+        static class BlockObjectToolActionCallbackColonyPlannerPatch {
 
-            static bool Prefix(ITool tool, ToolUnlockingService __instance) {
-                if (tool is not BlockObjectTool blockTool) {
+            static bool Prefix(BlockObjectTool __instance, object[] __args) {
+                var template = __instance.Template;
+                if (!template.HasSpec<BuildingSpec>()) {
                     return true;
                 }
 
-                if (!blockTool.Template.HasSpec<BuildingSpec>()) {
+                if (template.GetSpec<BuildingSpec>().ScienceCost <= 0) {
                     return true;
                 }
 
-                var buildingSpec = blockTool.Template.GetSpec<BuildingSpec>();
-                if (buildingSpec.ScienceCost <= 0) {
-                    return true;
-                }
-
-                var unlockService = ColonyPlannerUnlockServiceHolder.Instance;
-                if (unlockService == null) {
-                    return true;
-                }
-
-                if (unlockService.Unlocked(buildingSpec)) {
-                    return true;
-                }
-
-                var eventBus = ToolUnlockingEventBusField.GetValue(__instance);
-                PostToEventBus(eventBus, new ToolLockedEvent(tool));
+                _blockObjectToolPlaceMethod ??= AccessTools.Method(typeof(BlockObjectTool), "Place");
+                _blockObjectToolPlaceMethod.Invoke(__instance, __args);
                 return false;
             }
 
         }
 
         /// <summary>
-        ///   Unlocking from the entity panel calls <see cref="BuildingUnlockingService.UnlockIgnoringCost" /> without going through
+        ///   Unlocking from the entity panel calls <see cref="BuildingUnlockingService.Unlock" />/
+        ///   <see cref="BuildingUnlockingService.UnlockIgnoringCost" /> without going through
         ///   <see cref="ToolUnlockingService.Unlock" />, so tool buttons would keep <c>button--locked</c> until we sync visuals.
         /// </summary>
         [HarmonyPatch(typeof(BuildingUnlockingService), nameof(BuildingUnlockingService.UnlockIgnoringCost))]
@@ -117,11 +102,6 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
                 var unlocking = ToolUnlockingServiceInstance;
                 var buttons = ToolButtonServiceInstance;
                 if (unlocking == null || buttons == null) {
-                    return;
-                }
-
-                var eventBus = ToolUnlockingEventBusField.GetValue(unlocking);
-                if (eventBus == null) {
                     return;
                 }
 
@@ -139,36 +119,12 @@ namespace Timberborn.Mods.Daxisaurus.ColonyPlanner {
                         continue;
                     }
 
-                    PostToEventBus(eventBus, new ToolUnlockedEvent(blockTool));
+                    if (unlocking.IsLocked(blockTool)) {
+                        unlocking.Unlock(blockTool);
+                    }
                 }
             }
 
-        }
-
-        /// <summary>
-        ///   Game <see cref="Timberborn.SingletonSystem.EventBus" /> exposes <c>Post(object)</c>, not a generic <c>Post&lt;T&gt;</c>.
-        /// </summary>
-        static void PostToEventBus(object eventBus, object evt) {
-            var runtimeType = eventBus.GetType();
-            if (_cachedPostObjectMethod != null && _cachedPostObjectEventBusType == runtimeType) {
-                _cachedPostObjectMethod.Invoke(eventBus, new[] { evt });
-                return;
-            }
-
-            var post = runtimeType.GetMethod(
-                "Post",
-                BindingFlags.Public | BindingFlags.Instance,
-                null,
-                new[] { typeof(object) },
-                null);
-            if (post == null) {
-                throw new InvalidOperationException(
-                    $"ColonyPlanner: EventBus.Post(object) not found on {runtimeType.FullName}");
-            }
-
-            _cachedPostObjectEventBusType = runtimeType;
-            _cachedPostObjectMethod = post;
-            post.Invoke(eventBus, new[] { evt });
         }
 
     }
