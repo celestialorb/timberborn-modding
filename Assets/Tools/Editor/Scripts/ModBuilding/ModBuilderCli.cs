@@ -20,7 +20,7 @@ namespace Timberborn.ModdingTools.ModBuilding {
                                                       buildWindowsAssetBundle: true,
                                                       buildMacAssetBundle: true,
                                                       deleteFiles: true,
-                                                      buildZipArchive: false,
+                                                      buildZipArchive: HasZipFlag(),
                                                       compatibilityVersion: string.Empty);
 
       var buildSucceeded = new ModBuilder(enabledMods, modBuilderSettings).Build();
@@ -76,6 +76,11 @@ namespace Timberborn.ModdingTools.ModBuilding {
       }
 
       return modNames;
+    }
+
+    private static bool HasZipFlag() {
+      var args = Environment.GetCommandLineArgs();
+      return args.Any(argument => argument is "-zip" or "--zip");
     }
 
   }
