@@ -1,4 +1,3 @@
 ID,Text,Comment
-ColonyPlanner.EntityPanel.UnlockAction,"Unlock blueprint to build",Single-click strip; science cost shown in vanilla tooltip / confirm dialog
-ColonyPlanner.Status.ScienceLocked,"Blueprint locked — pay {0} science (entity panel) to build.",Floating icon tooltip when ColonyPlanner blocks construction until unlock
+ColonyPlanner.Status.ScienceLocked,"Blueprint locked — unlock it from the build menu for {0} science to build.",Floating icon tooltip when ColonyPlanner blocks construction until unlock
 ColonyPlanner.Alert.ScienceLockedBuildings,"Blueprint locked by science ({0})",Lower-left AlertPanel row when ghost sites await unlock; {0} is site count
